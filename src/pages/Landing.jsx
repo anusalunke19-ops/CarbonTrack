@@ -109,7 +109,7 @@ export default function Landing() {
           </div>
 
           <div className="feature-card glass-card">
-            <div className="feature-icon" style={{ background: 'rgba(0, 212, 170, 0.15)', color: '#00d4aa' }}>
+            <div className="feature-icon" style={{ background: 'rgba(163, 230, 53, 0.15)', color: '#a3e635' }}>
               <Utensils size={32} />
             </div>
             <h3>Diet</h3>
@@ -135,19 +135,19 @@ export default function Landing() {
 
         <div className="features-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
           <div className="feature-card glass-card-static text-center">
-            <div className="feature-icon" style={{ background: 'rgba(0, 212, 170, 0.1)', color: '#00d4aa' }}>1</div>
+            <div className="feature-icon" style={{ background: 'rgba(163, 230, 53, 0.1)', color: '#a3e635' }}>1</div>
             <h3 style={{ marginTop: '12px' }}>Log Daily Activity</h3>
             <p>Use our responsive input panel to capture your travel, energy, diet, and purchase data in seconds.</p>
           </div>
 
           <div className="feature-card glass-card-static text-center">
-            <div className="feature-icon" style={{ background: 'rgba(0, 212, 170, 0.1)', color: '#00d4aa' }}>2</div>
+            <div className="feature-icon" style={{ background: 'rgba(163, 230, 53, 0.1)', color: '#a3e635' }}>2</div>
             <h3 style={{ marginTop: '12px' }}>Analyze Trends</h3>
             <p>Get beautiful, real-time Chart.js interactive charts of your carbon budgets and historical curves.</p>
           </div>
 
           <div className="feature-card glass-card-static text-center">
-            <div className="feature-icon" style={{ background: 'rgba(0, 212, 170, 0.1)', color: '#00d4aa' }}>3</div>
+            <div className="feature-icon" style={{ background: 'rgba(163, 230, 53, 0.1)', color: '#a3e635' }}>3</div>
             <h3 style={{ marginTop: '12px' }}>Personalized Reduction</h3>
             <p>Acquire custom rules and Gemini AI prompts to swap high-intensity activities with low-impact options.</p>
           </div>

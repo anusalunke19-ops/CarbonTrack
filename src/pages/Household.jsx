@@ -31,7 +31,7 @@ export default function Household() {
     labels: householdLeaderboard.map(h => h.name),
     datasets: [{
       data: householdLeaderboard.map(h => h.co2e),
-      backgroundColor: [theme === 'dark' ? '#00f5c4' : '#0d9488', '#3b82f6', '#8b5cf6', '#f59e0b'],
+      backgroundColor: [theme === 'dark' ? '#a3e635' : '#4d7c0f', '#3b82f6', '#22c55e', '#f59e0b'],
       borderColor: theme === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(15,23,42,0.08)',
       borderWidth: 1,
     }]

@@ -110,7 +110,7 @@ export default function Recommendations() {
             <div className="tip-icon" style={{
               background: tip.pillar === 'transport' ? 'rgba(59, 130, 246, 0.15)' :
                           tip.pillar === 'energy' ? 'rgba(245, 158, 11, 0.15)' :
-                          tip.pillar === 'diet' ? 'rgba(0, 212, 170, 0.15)' : 'rgba(124, 58, 237, 0.15)'
+                          tip.pillar === 'diet' ? 'rgba(163, 230, 53, 0.15)' : 'rgba(124, 58, 237, 0.15)'
             }}>
               {tip.icon}
             </div>

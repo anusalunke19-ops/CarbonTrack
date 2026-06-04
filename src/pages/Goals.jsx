@@ -158,7 +158,7 @@ export default function Goals() {
                     />
                     <circle 
                       cx="40" cy="40" r="34" 
-                      stroke={g.status === 'on-track' ? (theme === 'dark' ? '#00f5c4' : '#0d9488') : g.status === 'at-risk' ? '#f59e0b' : '#ef4444'}
+                      stroke={g.status === 'on-track' ? (theme === 'dark' ? '#a3e635' : '#4d7c0f') : g.status === 'at-risk' ? '#f59e0b' : '#ef4444'}
                       strokeWidth="6" 
                       fill="transparent" 
                       strokeDasharray={2 * Math.PI * 34}

@@ -103,7 +103,7 @@ export default function Dashboard() {
         stats.pillarData.diet || 0,
         stats.pillarData.goods || 0
       ],
-      backgroundColor: ['#3b82f6', '#f59e0b', theme === 'dark' ? '#00f5c4' : '#0d9488', '#8b5cf6'],
+      backgroundColor: ['#3b82f6', '#f59e0b', theme === 'dark' ? '#a3e635' : '#4d7c0f', '#22c55e'],
       borderColor: theme === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(15,23,42,0.08)',
       borderWidth: 2,
     }]
@@ -151,7 +151,7 @@ export default function Dashboard() {
       };
     }
 
-    const accentColor = theme === 'dark' ? '#00f5c4' : '#0d9488';
+    const accentColor = theme === 'dark' ? '#a3e635' : '#4d7c0f';
 
     return {
       labels,
@@ -168,11 +168,11 @@ export default function Dashboard() {
           const ctx = context.chart.ctx;
           const gradient = ctx.createLinearGradient(0, 0, 0, 300);
           if (theme === 'dark') {
-            gradient.addColorStop(0, 'rgba(0, 245, 196, 0.15)');
-            gradient.addColorStop(1, 'rgba(0, 245, 196, 0)');
+            gradient.addColorStop(0, 'rgba(163, 230, 53, 0.15)');
+            gradient.addColorStop(1, 'rgba(163, 230, 53, 0)');
           } else {
-            gradient.addColorStop(0, 'rgba(13, 148, 136, 0.15)');
-            gradient.addColorStop(1, 'rgba(13, 148, 136, 0)');
+            gradient.addColorStop(0, 'rgba(77, 124, 15, 0.15)');
+            gradient.addColorStop(1, 'rgba(77, 124, 15, 0)');
           }
           return gradient;
         }
@@ -396,8 +396,8 @@ export default function Dashboard() {
             </div>
 
             <div style={{
-              background: stats.dailyAvg <= 12.7 ? 'rgba(0, 212, 170, 0.1)' : 'rgba(245, 158, 11, 0.1)',
-              border: stats.dailyAvg <= 12.7 ? '1px solid rgba(0, 212, 170, 0.2)' : '1px solid rgba(245, 158, 11, 0.2)',
+              background: stats.dailyAvg <= 12.7 ? 'rgba(163, 230, 53, 0.1)' : 'rgba(245, 158, 11, 0.1)',
+              border: stats.dailyAvg <= 12.7 ? '1px solid rgba(163, 230, 53, 0.2)' : '1px solid rgba(245, 158, 11, 0.2)',
               borderRadius: 'var(--radius-md)',
               padding: '16px',
               textAlign: 'center',
@@ -449,11 +449,11 @@ export default function Dashboard() {
         <div className="flex justify-between mt-12" style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>
           <span>Less Emissions</span>
           <div className="flex gap-8 items-center">
-            <span style={{ width: '10px', height: '10px', borderRadius: '2px', background: 'rgba(0, 212, 170, 0.05)' }} />
-            <span style={{ width: '10px', height: '10px', borderRadius: '2px', background: 'rgba(0, 212, 170, 0.15)' }} />
-            <span style={{ width: '10px', height: '10px', borderRadius: '2px', background: 'rgba(0, 212, 170, 0.3)' }} />
-            <span style={{ width: '10px', height: '10px', borderRadius: '2px', background: 'rgba(0, 212, 170, 0.5)' }} />
-            <span style={{ width: '10px', height: '10px', borderRadius: '2px', background: 'rgba(0, 212, 170, 0.75)' }} />
+            <span style={{ width: '10px', height: '10px', borderRadius: '2px', background: 'rgba(163, 230, 53, 0.05)' }} />
+            <span style={{ width: '10px', height: '10px', borderRadius: '2px', background: 'rgba(163, 230, 53, 0.15)' }} />
+            <span style={{ width: '10px', height: '10px', borderRadius: '2px', background: 'rgba(163, 230, 53, 0.3)' }} />
+            <span style={{ width: '10px', height: '10px', borderRadius: '2px', background: 'rgba(163, 230, 53, 0.5)' }} />
+            <span style={{ width: '10px', height: '10px', borderRadius: '2px', background: 'rgba(163, 230, 53, 0.75)' }} />
           </div>
           <span>More Emissions</span>
         </div>
