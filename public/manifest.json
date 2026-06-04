@@ -1,0 +1,17 @@
+{
+  "name": "CarbonTrack — Smart Carbon Footprint Tracker",
+  "short_name": "CarbonTrack",
+  "description": "Progressive Web Application to calculate carbon footprints, set goals and acquire Gemini AI optimization tips.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#06090f",
+  "theme_color": "#00d4aa",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    }
+  ]
+}
