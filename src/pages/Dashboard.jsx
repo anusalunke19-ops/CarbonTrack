@@ -224,6 +224,7 @@ export default function Dashboard() {
       else if (val >= 30) level = 4;
       
       result.push({ date: dStr, val, level });
+    }
     return result;
   }, [activities]);
 
