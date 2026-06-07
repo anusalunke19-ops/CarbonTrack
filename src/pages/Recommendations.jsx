@@ -1,17 +1,18 @@
 import { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Leaf, Sparkles, Check, Bookmark, Calendar } from 'lucide-react';
+import { Leaf, Check, Bookmark, Calendar } from 'lucide-react';
 import { useActivities } from '../context/ActivityContext';
 import { useToast } from '../context/ToastContext';
-import { getRecommendations, getPersonalizedTips, simulateGeminiResponse } from '../utils/recommendations';
+import { getRecommendations, getPersonalizedTips } from '../utils/recommendations';
 
 export default function Recommendations() {
   const { activities } = useActivities();
   const { addToast } = useToast();
   const [highestPillar, setHighestPillar] = useState('transport');
-  const [geminiTip, setGeminiTip] = useState('');
-  const [loadingAI, setLoadingAI] = useState(false);
-  const [acceptedTips, setAcceptedTips] = useState({});
+  const [acceptedTips, setAcceptedTips] = useState(() => {
+    const saved = JSON.parse(localStorage.getItem('ct_committed_tips')) || [];
+    return saved.reduce((acc, tip) => ({ ...acc, [tip.id]: true }), {});
+  });
 
   // Generate dynamic recommendation cards based on activities
   const recommendations = useMemo(() => {
@@ -38,66 +39,20 @@ export default function Recommendations() {
     setHighestPillar(maxPillar);
   }, [activities]);
 
-  const handleFetchGemini = async () => {
-    setLoadingAI(true);
-    setGeminiTip('');
-    try {
-      const response = await simulateGeminiResponse(highestPillar);
-      setGeminiTip(response);
-      addToast('Gemini AI fetched custom recommendations!', 'success');
-    } catch (e) {
-      addToast('AI prompt failed, loading static rules fallback...', 'warning');
-    } finally {
-      setLoadingAI(false);
-    }
-  };
 
-  const handleAcceptTip = (id, impact) => {
-    setAcceptedTips(prev => ({ ...prev, [id]: true }));
-    addToast(`Accepted tip! Projected saving: ${impact} kg CO2e/week`, 'success');
+  const handleAcceptTip = (tip) => {
+    setAcceptedTips(prev => ({ ...prev, [tip.id]: true }));
+    const saved = JSON.parse(localStorage.getItem('ct_committed_tips')) || [];
+    // don't save duplicate
+    if (!saved.some(t => t.id === tip.id)) {
+      saved.push({ id: tip.id, title: tip.title, desc: tip.desc, impact: tip.impact, committedAt: new Date().toISOString() });
+      localStorage.setItem('ct_committed_tips', JSON.stringify(saved));
+    }
+    addToast(`Accepted tip! Projected saving: ${tip.impact} kg CO2e/week`, 'success');
   };
 
   return (
     <div className="recommendations-view">
-      {/* Sparkles Banner */}
-      <div className="glass-card" style={{
-        padding: '28px',
-        background: 'var(--gradient-card)',
-        border: '1px solid var(--border-accent)',
-        position: 'relative',
-        overflow: 'hidden',
-        marginBottom: '28px'
-      }}>
-        <div style={{ position: 'relative', zIndex: 2 }}>
-          <span className="hero-badge" style={{ marginBottom: '12px' }}>
-            <Sparkles size={14} /> Powered by Gemini Flash 1.5
-          </span>
-          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', marginBottom: '8px' }}>
-            Gemini Personalized Recommendations Engine
-          </h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', maxWidth: '600px', marginBottom: '20px' }}>
-            Our dual-path recommendation system monitors your activity logs to extract carbon patterns, falling back to static local rules when offline.
-          </p>
-          <button className="btn btn-primary" onClick={handleFetchGemini} disabled={loadingAI}>
-            {loadingAI ? 'Invoking Gemini API...' : '✨ Generate Tailored AI Advice'}
-          </button>
-        </div>
-      </div>
-
-      {/* Gemini AI Live Output */}
-      {geminiTip && (
-        <motion.div 
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="glass-card" 
-          style={{ padding: '24px', borderLeft: '4px solid var(--accent-primary)', marginBottom: '28px', background: 'rgba(13, 17, 23, 0.9)' }}
-        >
-          <h4 style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.95rem', marginBottom: '8px', color: 'var(--accent-primary)' }}>
-            <Sparkles size={16} /> Live AI Insights
-          </h4>
-          <p style={{ fontSize: '0.9rem', lineHeight: '1.6', color: 'var(--text-primary)' }}>{geminiTip}</p>
-        </motion.div>
-      )}
 
       {/* Static fallbacks cards */}
       <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.1rem', marginBottom: '16px' }}>
@@ -130,7 +85,7 @@ export default function Recommendations() {
                 ) : (
                   <button 
                     className="btn btn-secondary btn-sm" 
-                    onClick={() => handleAcceptTip(tip.id, tip.impact)}
+                    onClick={() => handleAcceptTip(tip)}
                   >
                     Commit Tip
                   </button>

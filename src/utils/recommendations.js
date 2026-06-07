@@ -82,18 +82,4 @@ export function getPersonalizedTips(pillar) {
   }));
 }
 
-export function simulateGeminiResponse(highestPillar) {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const tips = {
-        transport: 'Gemini Analysis: Based on your transport footprint, transitioning to cycling for short trips could prevent up to 80kg of CO2e monthly. Consider batching errands to minimize overall driving distance.',
-        energy: 'Gemini Analysis: Your energy patterns indicate thermal loss. Double-glazing windows or insulating doors can yield up to 15% reduction in heating/cooling footprint.',
-        diet: 'Gemini Analysis: Substituting poultry or legumes for beef even three days a week will cut your diet-based emissions by nearly 35%. Focus on seasonal foods.',
-        goods: 'Gemini Analysis: Your consumer habits show lifecycle overhead. Try adopting a "one-in-one-out" policy and check local circular-economy apps for electronics.'
-      };
-      resolve(tips[highestPillar] || tips.transport);
-    }, 1500);
-  });
-}
-
 export { TIPS_DATABASE };

@@ -1,6 +1,19 @@
 import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Target, Calendar, Plus, Award, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { Target, Calendar, Plus, Award, AlertTriangle, ShieldCheck, AlertCircle } from 'lucide-react';
+
+function FieldError({ msg }) {
+  if (!msg) return null;
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -4 }}
+      animate={{ opacity: 1, y: 0 }}
+      style={{ display: 'flex', alignItems: 'center', gap: '5px', color: 'var(--accent-danger)', fontSize: '0.78rem', marginTop: '5px' }}
+    >
+      <AlertCircle size={13} /> {msg}
+    </motion.div>
+  );
+}
 import { useActivities } from '../context/ActivityContext';
 import { useToast } from '../context/ToastContext';
 import { goalsAPI } from '../services/api';
@@ -70,28 +83,43 @@ export default function Goals() {
     });
   }, [goals, activities]);
 
+  const [goalTouched, setGoalTouched] = useState({});
+  const touchGoal = (field) => setGoalTouched(p => ({ ...p, [field]: true }));
+
+  const goalErrors = {
+    name: !name.trim() ? 'Goal name is required.' : name.trim().length < 3 ? 'Name must be at least 3 characters.' : '',
+    targetValue: !targetValue ? 'Target value is required.' : Number(targetValue) <= 0 ? 'Target must be greater than 0.' : isNaN(Number(targetValue)) ? 'Enter a valid number.' : '',
+    startDate: !startDate ? 'Start date is required.' : '',
+    endDate: !endDate ? 'End date is required.' : (startDate && endDate && new Date(endDate) <= new Date(startDate)) ? 'End date must be after start date.' : '',
+  };
+
+  const goalInputStyle = (field) => ({
+    borderColor: goalTouched[field] && goalErrors[field] ? 'var(--accent-danger)' : undefined,
+  });
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name || !targetValue || !startDate || !endDate) {
-      addToast('Please fill out all required fields', 'warning');
+    setGoalTouched({ name: true, targetValue: true, startDate: true, endDate: true });
+    const hasErrors = Object.values(goalErrors).some(e => e !== '');
+    if (hasErrors) {
+      addToast('Please fix the errors before submitting.', 'warning');
       return;
     }
 
     try {
       await goalsAPI.create({
         userId: user.id,
-        name,
+        name: name.trim(),
         type,
         targetValue: Number(targetValue),
         startDate,
         endDate,
-        description
+        description: description.trim()
       });
       addToast('Ecosystem Goal established!', 'success');
       setModalOpen(false);
+      setGoalTouched({});
       fetchGoals();
-      
-      // Clear forms
       setName('');
       setDescription('');
       setTargetValue('');
@@ -251,7 +279,10 @@ export default function Goals() {
                       placeholder="e.g. Daily Commute Budget"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
+                      onBlur={() => touchGoal('name')}
+                      style={goalInputStyle('name')}
                     />
+                    <FieldError msg={goalTouched.name && goalErrors.name} />
                   </div>
 
                   <div className="form-group mb-16">
@@ -271,11 +302,15 @@ export default function Goals() {
                     <label className="form-label">Target Ceiling Value (kg CO₂e)</label>
                     <input 
                       type="number" 
+                      min="1"
                       className="form-input" 
                       placeholder="e.g. 400"
                       value={targetValue}
                       onChange={(e) => setTargetValue(e.target.value)}
+                      onBlur={() => touchGoal('targetValue')}
+                      style={goalInputStyle('targetValue')}
                     />
+                    <FieldError msg={goalTouched.targetValue && goalErrors.targetValue} />
                   </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }} className="mb-16">
@@ -286,7 +321,10 @@ export default function Goals() {
                         className="form-input" 
                         value={startDate}
                         onChange={(e) => setStartDate(e.target.value)}
+                        onBlur={() => touchGoal('startDate')}
+                        style={goalInputStyle('startDate')}
                       />
+                      <FieldError msg={goalTouched.startDate && goalErrors.startDate} />
                     </div>
                     <div className="form-group">
                       <label className="form-label">End Date</label>
@@ -295,7 +333,10 @@ export default function Goals() {
                         className="form-input" 
                         value={endDate}
                         onChange={(e) => setEndDate(e.target.value)}
+                        onBlur={() => touchGoal('endDate')}
+                        style={goalInputStyle('endDate')}
                       />
+                      <FieldError msg={goalTouched.endDate && goalErrors.endDate} />
                     </div>
                   </div>
 

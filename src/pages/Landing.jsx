@@ -55,7 +55,7 @@ export default function Landing() {
           
           <motion.p variants={itemVariants}>
             CarbonTrack is a next-generation platform for individuals, households, and organizations.
-            Log activities across 4 pillars, compute emissions in real time, and reduce your footprint with Gemini AI recommendations.
+            Log activities across 4 pillars, compute emissions in real time, and reduce your footprint with personalized recommendations.
           </motion.p>
           
           <motion.div variants={itemVariants} className="hero-actions">
@@ -149,7 +149,7 @@ export default function Landing() {
           <div className="feature-card glass-card-static text-center">
             <div className="feature-icon" style={{ background: 'rgba(163, 230, 53, 0.1)', color: '#a3e635' }}>3</div>
             <h3 style={{ marginTop: '12px' }}>Personalized Reduction</h3>
-            <p>Acquire custom rules and Gemini AI prompts to swap high-intensity activities with low-impact options.</p>
+            <p>Acquire custom rules and actionable tips to swap high-intensity activities with low-impact options.</p>
           </div>
         </div>
       </section>

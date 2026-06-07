@@ -263,6 +263,19 @@ export const authAPI = {
     return user;
   },
 
+  updateUser: async (updatedData) => {
+    await new Promise(r => setTimeout(r, 400));
+    const users = getStore('ct_users');
+    const index = users.findIndex(u => u.id === updatedData.id);
+    if (index !== -1) {
+      users[index] = { ...users[index], ...updatedData };
+      setStore('ct_users', users);
+      setStore('ct_current_user', users[index]);
+      return users[index];
+    }
+    throw new Error('User not found');
+  },
+
   logout: async () => {
     localStorage.removeItem('ct_current_user');
     return true;
@@ -277,7 +290,7 @@ export const activityAPI = {
   create: async (activity) => {
     await new Promise(r => setTimeout(r, 400));
     const activities = getStore('ct_activities');
-    const co2e = calculateEmission(activity.pillar, activity.category, activity.quantity);
+    const co2e = activity.co2e !== undefined ? activity.co2e : calculateEmission(activity.pillar, activity.category, activity.quantity);
     const newActivity = {
       id: `act-${Date.now()}`,
       co2e,

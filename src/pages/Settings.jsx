@@ -1,16 +1,48 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useActivities } from '../context/ActivityContext';
 import { useToast } from '../context/ToastContext';
-import { exportAPI } from '../services/api';
-import { Download, Trash2, ShieldAlert, Award } from 'lucide-react';
+import { exportAPI, authAPI } from '../services/api';
+import { Download, Trash2, Award, Edit2, Save, X, Target, Leaf } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 
 export default function Settings() {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
   const { clearAllActivities, loadSampleData } = useActivities();
   const { addToast } = useToast();
   const { theme, toggleTheme } = useTheme();
+
+  // Profile Edit State
+  const [isEditing, setIsEditing] = useState(false);
+  const [editName, setEditName] = useState('');
+  const [editEmail, setEditEmail] = useState('');
+
+  // Committed Tips State
+  const [committedTips, setCommittedTips] = useState([]);
+
+  useEffect(() => {
+    if (user) {
+      setEditName(user.name);
+      setEditEmail(user.email);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    const saved = JSON.parse(localStorage.getItem('ct_committed_tips')) || [];
+    setCommittedTips(saved);
+  }, []);
+
+  const handleSaveProfile = async () => {
+    try {
+      if (!editName || !editEmail) return addToast('Name and Email cannot be empty.', 'warning');
+      const updatedUser = await authAPI.updateUser({ ...user, name: editName, email: editEmail });
+      setUser(updatedUser);
+      setIsEditing(false);
+      addToast('Profile updated successfully!', 'success');
+    } catch (e) {
+      addToast('Error updating profile.', 'error');
+    }
+  };
 
   const handleLoadSampleData = async () => {
     try {
@@ -32,7 +64,7 @@ export default function Settings() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `CarbonTrack_MyData_${user.name.replace(/\s+/g, '_')}.csv`;
+      a.download = `CarbonTrack_MyData_${user.name.replace(/\\s+/g, '_')}.csv`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -53,16 +85,40 @@ export default function Settings() {
     <div className="settings-view" style={{ maxWidth: '800px' }}>
       {/* Profile summary */}
       <div className="settings-section">
-        <h3 className="settings-section-title">User Account Specifications</h3>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+          <h3 className="settings-section-title" style={{ margin: 0 }}>User Profile</h3>
+          {!isEditing ? (
+            <button className="btn btn-secondary btn-sm" onClick={() => setIsEditing(true)}>
+              <Edit2 size={14} /> Edit Profile
+            </button>
+          ) : (
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button className="btn btn-ghost btn-sm" onClick={() => setIsEditing(false)}>
+                <X size={14} /> Cancel
+              </button>
+              <button className="btn btn-primary btn-sm" onClick={handleSaveProfile}>
+                <Save size={14} /> Save Changes
+              </button>
+            </div>
+          )}
+        </div>
         <div className="glass-card-static" style={{ padding: '20px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
             <div>
               <span className="form-label" style={{ display: 'block', fontSize: '0.78rem' }}>Name / Organisation</span>
-              <span style={{ fontSize: '1rem', fontWeight: 600 }}>{user?.name || 'Ananya Salunke'}</span>
+              {!isEditing ? (
+                <span style={{ fontSize: '1rem', fontWeight: 600 }}>{user?.name || 'Ananya Salunke'}</span>
+              ) : (
+                <input type="text" className="form-input" value={editName} onChange={e => setEditName(e.target.value)} />
+              )}
             </div>
             <div>
               <span className="form-label" style={{ display: 'block', fontSize: '0.78rem' }}>Register Email</span>
-              <span style={{ fontSize: '1rem', fontWeight: 600 }}>{user?.email || 'demo@carbontrack.com'}</span>
+              {!isEditing ? (
+                <span style={{ fontSize: '1rem', fontWeight: 600 }}>{user?.email || 'demo@carbontrack.com'}</span>
+              ) : (
+                <input type="email" className="form-input" value={editEmail} onChange={e => setEditEmail(e.target.value)} />
+              )}
             </div>
             <div>
               <span className="form-label" style={{ display: 'block', fontSize: '0.78rem' }}>Account Role Class</span>
@@ -73,6 +129,35 @@ export default function Settings() {
               <span style={{ fontSize: '1rem', fontWeight: 600 }}>Metric (kg CO₂e)</span>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Committed Tips Section */}
+      <div className="settings-section">
+        <h3 className="settings-section-title">Active Carbon Commitments</h3>
+        <div className="glass-card-static" style={{ padding: '20px' }}>
+          {committedTips.length === 0 ? (
+            <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '0.9rem' }}>
+              You haven't committed to any eco-tips yet. Visit the Recommendations page to start committing to footprint reductions!
+            </p>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {committedTips.map(tip => (
+                <div key={tip.id} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', paddingBottom: '12px', borderBottom: '1px solid var(--border-primary)' }}>
+                  <div className="stat-icon green" style={{ fontSize: '1.2rem', flexShrink: 0, padding: '8px' }}>
+                    <Target size={18} />
+                  </div>
+                  <div>
+                    <h4 style={{ fontSize: '0.95rem', fontWeight: 600, marginBottom: '4px' }}>{tip.title}</h4>
+                    <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '8px' }}>{tip.desc}</p>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--accent-primary)', fontWeight: 600 }}>
+                      ✨ Saving ~{tip.impact} kg CO₂e / week
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
